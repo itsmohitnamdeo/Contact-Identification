@@ -1,0 +1,22 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Contact {
+  id             Int      @id @default(autoincrement())
+  phoneNumber    String?  
+  email          String?  
+  linkedId       Int?     
+  linkPrecedence String   // "primary" or "secondary"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  deletedAt      DateTime?
+
+  linkedTo       Contact? @relation("Link", fields: [linkedId], references: [id])
+  linkedContacts Contact[] @relation("Link")
+}

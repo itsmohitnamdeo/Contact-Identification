@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Identity Finder</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f6fc;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      margin-top: 60px;
+      background: white;
+      padding: 40px 50px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #2a3f74;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      color: #2a3f74;
+      font-weight: 500;
+    }
+
+    input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-top: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 25px;
+      width: 100%;
+      background: #4169e1;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2b50c3;
+    }
+
+    .response {
+      margin-top: 25px;
+      padding: 15px;
+      background: #eaf4ff;
+      border-left: 4px solid #4169e1;
+      font-family: monospace;
+      white-space: pre-wrap;
+      font-size: 14px;
+      color: #333;
+      border-radius: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 40px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🧠 Identity Finder</h2>
+
+    <label for="email">Email</label>
+    <input type="text" id="email" placeholder="e.g. example@gmail.com">
+
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" placeholder="e.g. 1234567890">
+
+    <button onclick="identify()">Identify Contact</button>
+
+    <div id="output" class="response" style="display: none;"></div>
+  </div>
+
+  <script>
+    async function identify() {
+      const email = document.getElementById('email').value.trim();
+      const phoneNumber = document.getElementById('phone').value.trim();
+      const outputDiv = document.getElementById('output');
+
+      if (!email && !phoneNumber) {
+        alert("Please enter at least email or phone number.");
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/identify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email || null,
+            phoneNumber: phoneNumber || null
+          })
+        });
+
+        const data = await response.json();
+        outputDiv.style.display = 'block';
+        outputDiv.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        outputDiv.style.display = 'block';
+        outputDiv.textContent = "Error contacting backend. Make sure it's running!";
+      }
+    }
+  </script>
+</body>
+</html>
